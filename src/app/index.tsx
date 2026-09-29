@@ -1,98 +1,94 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+const tileColors = {
+    one: '#1E7AF4',
+    two: '#F63F3E',
+    three: '#FFD51A',
+    four: '#25AE67',
+    five: '#8938E5',
+    six: '#FF7411',
+};
 
 export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    const { height } = useWindowDimensions();
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+    return (
+        <View style={styles.screen}>
+            <StatusBar hidden />
+            <View style={[styles.grid, { marginTop: height * 0.02 }]}>
+                <View style={[styles.row, { height: height * 0.204, marginBottom: height * 0.011 }]}>
+                    <Tile number="1" color={tileColors.one} />
+                    <Tile number="2" color={tileColors.two} />
+                </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+                <View style={[styles.row, { height: height * 0.198, marginBottom: height * 0.011 }]}>
+                    <View style={{ flex: 0.75 }}>
+                        <Tile number="3" color={tileColors.three} textColor="#090909" />
+                    </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
+                    <View style={{ flex: 0.75 }}>
+                        <Tile number="4" color={tileColors.four} />
+                    </View>
+
+                    <View style={{ flex: 1.5 }}>
+                        <Tile number="5" color={tileColors.five} />
+                    </View>
+                </View>
+
+                <View style={[styles.row, { height: height * 0.173 }]}>
+                    <Tile number="6" color={tileColors.six} />
+                </View>
+            </View>
+
+            <Text style={[styles.footer, { bottom: height * 0.037 }]}>Nguyễn Đức Hiếu - BIT240092</Text>
+        </View>
+    );
+}
+
+type TileProps = {
+    number: string;
+    color: string;
+    textColor?: string;
+};
+
+function Tile({ number, color, textColor = '#FFFFFF' }: TileProps) {
+    return (
+        <View style={[styles.tile, { backgroundColor: color }]}>
+            <Text style={[styles.tileLabel, { color: textColor }]}>{number}</Text>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
+    screen: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+    },
+    grid: {
+        marginHorizontal: '4%',
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 7,
+    },
+    tile: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    tileLabel: {
+        fontSize: 44,
+        fontWeight: '700',
+        lineHeight: 52,
+        textAlign: 'center',
+    },
+    footer: {
+        position: 'absolute',
+        alignSelf: 'center',
+        color: '#555555',
+        fontSize: 15,
+        fontWeight: '600',
+        lineHeight: 18,
+    },
 });
